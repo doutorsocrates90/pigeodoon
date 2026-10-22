@@ -59,6 +59,7 @@ fn main_window(app: &AppHandle) -> Option<WebviewWindow> {
 fn show_main(app: &AppHandle) {
     if let Some(win) = main_window(app) {
         let _ = win.show();
+        #[cfg(desktop)]
         let _ = win.unminimize();
         let _ = win.set_focus();
     }
@@ -72,6 +73,7 @@ fn go_to_discuss(app: &AppHandle) {
 
 fn clear_unread(app: &AppHandle) {
     *app.state::<AppState>().unread.lock().unwrap() = 0;
+    #[cfg(desktop)]
     if let Some(win) = main_window(app) {
         let _ = win.set_badge_count(None);
     }
@@ -233,6 +235,7 @@ fn show_notification(app: AppHandle, state: State<AppState>, title: String, body
     {
         let mut unread = state.unread.lock().unwrap();
         *unread += 1;
+        #[cfg(desktop)]
         if s.show_badge {
             if let Some(win) = main_window(&app) {
                 let _ = win.set_badge_count(Some(*unread));
