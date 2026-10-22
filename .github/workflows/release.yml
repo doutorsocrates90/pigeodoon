@@ -7,6 +7,12 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'What to build'
+        type: choice
+        options: [all, desktop, android]
+        default: all
 
 permissions:
   contents: write
@@ -35,6 +41,7 @@ jobs:
 
   desktop:
     needs: create-release
+    if: github.event_name != 'workflow_dispatch' || inputs.platforms == 'all' || inputs.platforms == 'desktop'
     strategy:
       fail-fast: false
       matrix:
@@ -86,6 +93,7 @@ jobs:
 
   android:
     needs: create-release
+    if: github.event_name != 'workflow_dispatch' || inputs.platforms == 'all' || inputs.platforms == 'android'
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -95,11 +103,12 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: android-actions/setup-android@v3
-
-      - name: Android SDK and NDK
+      # The runner image already contains the Android SDK; only the pieces we need are added.
+      - name: Android SDK pieces and NDK
         run: |
-          sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973"
+          SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973"
           echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
           echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.0.12077973" >> "$GITHUB_ENV"
 
