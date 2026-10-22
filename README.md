@@ -104,7 +104,7 @@ Requirements: [Node.js](https://nodejs.org) 20+, [Rust](https://rustup.rs) (stab
 [Tauri prerequisites](https://tauri.app/start/prerequisites/) for your system.
 
 ```bash
-git clone https://github.com/<your-user>/pigeodoon.git
+git clone https://github.com/doutorsocrates90/pigeodoon.git
 cd pigeodoon
 npm install
 npm run tauri dev        # run in development
