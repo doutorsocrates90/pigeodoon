@@ -1,0 +1,161 @@
+name: Release
+
+# Builds installers for macOS (Apple Silicon + Intel), Windows, Linux and Android and attaches them
+# to a GitHub release. Start it by pushing a tag like v0.1.0, or by hand from the Actions tab
+# (then the version tag is read from src-tauri/tauri.conf.json).
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-22.04
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Work out the tag
+        id: tag
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then TAG="${{ github.ref_name }}"; else TAG="v$(jq -r .version src-tauri/tauri.conf.json)"; fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+      - name: Create the release if it does not exist yet
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --target "${{ github.sha }}" --prerelease --title "Pigeodoon $TAG" \
+              --notes "Installers for macOS, Windows, Linux and Android. See the README for how to install them (the installers are not signed with paid certificates yet, so your system will warn you once)."
+          fi
+
+  desktop:
+    needs: create-release
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            args: --target aarch64-apple-darwin
+            rust_targets: aarch64-apple-darwin
+          - os: macos-latest
+            args: --target x86_64-apple-darwin
+            rust_targets: x86_64-apple-darwin
+          - os: ubuntu-22.04
+            args: ''
+            rust_targets: ''
+          - os: windows-latest
+            args: ''
+            rust_targets: ''
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Linux system packages
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libssl-dev
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - run: npm install
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ needs.create-release.outputs.tag }}
+          releaseDraft: false
+          prerelease: true
+          args: ${{ matrix.args }}
+
+  android:
+    needs: create-release
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Android SDK and NDK
+        run: |
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973"
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+          echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.0.12077973" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - run: npm install
+
+      - name: Generate the Android project and build the APK
+        run: |
+          npm run tauri android init
+          npm run tauri android build -- --apk --target aarch64 --target armv7
+
+      - name: Sign the APK
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          BT="$ANDROID_SDK_ROOT/build-tools/34.0.0"
+          APK=$(find src-tauri/gen/android -name '*-release-unsigned.apk' | head -1)
+          echo "Unsigned APK: $APK"
+          VERSION=$(jq -r .version src-tauri/tauri.conf.json)
+          mkdir -p dist
+          "$BT/zipalign" -f -p 4 "$APK" dist/aligned.apk
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > dist/release.jks
+            "$BT/apksigner" sign --ks dist/release.jks --ks-key-alias "$KEY_ALIAS" \
+              --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEY_PASSWORD \
+              --out "dist/Pigeodoon_${VERSION}_android.apk" dist/aligned.apk
+          else
+            echo "No signing key configured: signing with a temporary debug key (updates will need an uninstall first)."
+            keytool -genkeypair -keystore dist/debug.jks -alias debug -keyalg RSA -keysize 2048 -validity 3650 \
+              -storepass android -keypass android -dname "CN=Pigeodoon debug"
+            "$BT/apksigner" sign --ks dist/debug.jks --ks-key-alias debug --ks-pass pass:android --key-pass pass:android \
+              --out "dist/Pigeodoon_${VERSION}_android.apk" dist/aligned.apk
+          fi
+          "$BT/apksigner" verify --print-certs "dist/Pigeodoon_${VERSION}_android.apk" | head -3
+          rm -f dist/release.jks dist/debug.jks dist/aligned.apk dist/*.idsig
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pigeodoon-android
+          path: dist/*.apk
+
+      - name: Attach the APK to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ needs.create-release.outputs.tag }}" dist/*.apk --clobber

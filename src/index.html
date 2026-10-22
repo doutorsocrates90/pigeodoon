@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pigeodoon</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <img class="logo" src="logo.svg" alt="">
+    <h1>Pigeodoon</h1>
+    <p class="lead">Your Odoo chat, on its own. Enter the address of your Odoo server to sign in.</p>
+    <form id="form" autocomplete="off">
+      <label for="url">Odoo server</label>
+      <input id="url" type="text" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false"
+             placeholder="mycompany.odoo.com" autofocus>
+      <div class="hint">Works with Odoo 17, 18 and 19, Community and Enterprise, Odoo Online and self-hosted.</div>
+      <button class="primary" id="go" type="submit">Continue</button>
+      <div class="status" id="status" role="status"></div>
+    </form>
+    <footer id="footer"></footer>
+  </main>
+  <script src="connect.js"></script>
+</body>
+</html>

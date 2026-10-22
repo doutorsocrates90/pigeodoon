@@ -1,0 +1,17 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "local",
+  "description": "Pigeodoon's own pages (connect screen, settings). Not given to remote web pages.",
+  "windows": ["main", "settings"],
+  "permissions": [
+    "core:default",
+    "allow-check-server",
+    "allow-connect",
+    "allow-get-settings",
+    "allow-save-settings",
+    "allow-disconnect",
+    "allow-sign-out",
+    "allow-open-settings",
+    "allow-back-to-chat"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "remote",
+  "description": "The Odoo server the user connected to may only raise notifications, clear the badge, open links in the browser and (phones) open the settings page.",
+  "windows": ["main"],
+  "remote": {
+    "urls": ["https://*", "https://*:*", "http://*", "http://*:*"]
+  },
+  "permissions": [
+    "allow-show-notification",
+    "allow-clear-badge",
+    "allow-open-external",
+    "allow-open-settings"
+  ]
+}

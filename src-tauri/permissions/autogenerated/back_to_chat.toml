@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-back-to-chat"
+description = "Enables the back_to_chat command without any pre-configured scope."
+commands.allow = ["back_to_chat"]
+
+[[permission]]
+identifier = "deny-back-to-chat"
+description = "Denies the back_to_chat command without any pre-configured scope."
+commands.deny = ["back_to_chat"]

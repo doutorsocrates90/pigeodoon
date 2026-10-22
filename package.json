@@ -1,0 +1,15 @@
+{
+  "name": "pigeodoon",
+  "version": "0.1.0",
+  "description": "A lightweight desktop and mobile client for Odoo Discuss (chat) with native notifications.",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}

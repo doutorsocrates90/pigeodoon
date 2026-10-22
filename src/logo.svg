@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff3b7a"/>
+      <stop offset="1" stop-color="#c4003f"/>
+    </linearGradient>
+  </defs>
+  <rect x="64" y="64" width="896" height="896" rx="200" fill="url(#bg)"/>
+  <!-- chat bubble -->
+  <path d="M232 300a96 96 0 0 1 96-96h368a96 96 0 0 1 96 96v248a96 96 0 0 1-96 96H500l-150 128a20 20 0 0 1-33-15V644h-1a96 96 0 0 1-84-96z" fill="#fff"/>
+  <!-- pigeodoon -->
+  <g fill="#c4003f">
+    <ellipse cx="500" cy="450" rx="150" ry="92" transform="rotate(-12 500 450)"/>
+    <circle cx="640" cy="388" r="62"/>
+    <path d="M692 372l78 24-78 24z" fill="#ffb300"/>
+    <path d="M360 470l-120 54 150-8z"/>
+  </g>
+  <circle cx="654" cy="378" r="11" fill="#fff"/>
+  <path d="M470 430c40-60 112-70 150-34-54 6-96 36-120 74z" fill="#ff6f9c"/>
+</svg>

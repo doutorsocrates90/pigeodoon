@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pigeodoon Settings</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="settings">
+  <button id="back" class="link" style="display:none;margin-bottom:6px">‹ Back to chat</button>
+  <h1>Settings</h1>
+  <div class="server" id="server"></div>
+
+  <section>
+    <h2>Notifications</h2>
+    <div class="row"><div><div class="t">Show notifications</div><div class="d">Native notifications for new messages.</div></div>
+      <label class="switch"><input type="checkbox" data-key="notifications"><span></span></label></div>
+    <div class="row" data-needs="notifications"><div><div class="t">Show message preview</div><div class="d">When off, notifications only say "New message".</div></div>
+      <label class="switch"><input type="checkbox" data-key="show_preview"><span></span></label></div>
+    <div class="row"><div><div class="t">Play a sound</div></div>
+      <label class="switch"><input type="checkbox" data-key="play_sound"><span></span></label></div>
+    <div class="row"><div><div class="t">Unread badge</div><div class="d">Count of new messages on the app icon.</div></div>
+      <label class="switch"><input type="checkbox" data-key="show_badge"><span></span></label></div>
+  </section>
+
+  <section>
+    <h2>Quiet hours</h2>
+    <div class="row"><div><div class="t">Do not disturb</div><div class="d">No notifications during these hours (the badge still counts).</div></div>
+      <label class="switch"><input type="checkbox" data-key="quiet_hours"><span></span></label></div>
+    <div class="row" data-needs="quiet_hours"><div class="t">From / to</div>
+      <div class="times"><input type="time" data-key="quiet_from"><input type="time" data-key="quiet_to"></div></div>
+  </section>
+
+  <section>
+    <h2>App</h2>
+    <div class="row"><div><div class="t">Keep running when the window is closed</div><div class="d">Stay in the menu bar / tray so you keep getting notifications.</div></div>
+      <label class="switch"><input type="checkbox" data-key="keep_running"><span></span></label></div>
+    <div class="row"><div><div class="t">Start at login</div></div>
+      <label class="switch"><input type="checkbox" data-key="start_at_login"><span></span></label></div>
+  </section>
+
+  <section>
+    <h2>Account</h2>
+    <div class="row"><div class="buttons" style="width:100%">
+      <button id="signout">Sign out</button>
+      <button id="change" class="danger">Change server…</button></div></div>
+  </section>
+  <div class="saved" id="saved"></div>
+  <script src="settings.js"></script>
+</body>
+</html>
