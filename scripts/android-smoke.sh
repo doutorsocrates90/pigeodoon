@@ -19,6 +19,18 @@ for s in 5 15 40; do
   { echo "--- after ~${s}s"; adb shell pidof "$PKG" || echo "process NOT running"; } >> "$OUT/process.txt"
 done
 
+# Second part: type the GIG server address and press Continue (1080x2400 screen: field ~y1306, button ~y1566).
+adb shell input tap 540 1306
+sleep 2
+adb shell input text "odoo.globalinnovationgathering.org"
+sleep 1
+adb exec-out screencap -p > "$OUT/screen_typed.png"
+adb shell input tap 540 1566
+sleep 20
+adb exec-out screencap -p > "$OUT/screen_after_continue.png"
+adb shell input keyevent KEYCODE_BACK   # closes the keyboard if it is still open
+sleep 2
+adb exec-out screencap -p > "$OUT/screen_after_continue_2.png"
 adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1 && adb pull /sdcard/ui.xml "$OUT/ui.xml" > /dev/null 2>&1 || true
 adb shell dumpsys activity activities 2>/dev/null | grep -E "topResumedActivity|mResumedActivity" > "$OUT/activity.txt" || true
 adb shell dumpsys webviewupdate > "$OUT/webview.txt" 2>&1 || true
