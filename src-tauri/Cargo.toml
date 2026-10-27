@@ -1,6 +1,6 @@
 [package]
 name = "pigeodoon"
-version = "0.1.0"
+version = "0.1.1"
 description = "A lightweight client for Odoo Discuss with native notifications"
 authors = ["Pigeodoon contributors"]
 license = "GPL-3.0-or-later"
