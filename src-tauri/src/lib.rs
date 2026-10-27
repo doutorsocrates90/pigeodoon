@@ -479,12 +479,19 @@ pub fn run() {
                 build_tray(&handle)?;
             }
 
+            let window = create_main_window(&handle)?;
+
+            // Phones ask the user for the notification permission. This call waits for the answer, which
+            // Android delivers on the main thread: asking from here (the main thread) would freeze the app
+            // before it shows anything. Ask from a helper thread, once the window exists.
             #[cfg(mobile)]
             {
-                let _ = handle.notification().request_permission();
+                let ask = handle.clone();
+                std::thread::spawn(move || {
+                    let _ = ask.notification().request_permission();
+                });
             }
 
-            let window = create_main_window(&handle)?;
             let started_minimized = std::env::args().any(|a| a == "--minimized");
             if started_minimized && current(&handle).server_url.is_some() {
                 let _ = window.hide();

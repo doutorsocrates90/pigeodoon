@@ -9,6 +9,7 @@ mkdir -p "$OUT"
 
 adb install -r "$APK" 2>&1 | tee "$OUT/install.txt"
 adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS 2>&1 | tee -a "$OUT/install.txt" || true
+adb shell settings put global hide_error_dialogs 1 || true   # the slow emulator launcher otherwise covers the screen
 adb logcat -c
 adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 > "$OUT/launch.txt" 2>&1
 
@@ -18,6 +19,7 @@ for s in 5 15 40; do
   { echo "--- after ~${s}s"; adb shell pidof "$PKG" || echo "process NOT running"; } >> "$OUT/process.txt"
 done
 
+adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1 && adb pull /sdcard/ui.xml "$OUT/ui.xml" > /dev/null 2>&1 || true
 adb shell dumpsys activity activities 2>/dev/null | grep -E "topResumedActivity|mResumedActivity" > "$OUT/activity.txt" || true
 adb shell dumpsys webviewupdate > "$OUT/webview.txt" 2>&1 || true
 adb logcat -d -v threadtime > "$OUT/logcat_full.txt"
