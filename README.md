@@ -58,14 +58,26 @@ background.
 
 ### Android
 
-Download `Pigeodoon_*_android.apk` on your phone and open it. Android asks you to allow installing apps
-from this source (your browser or file manager): allow it for this one install. Allow notifications
-when asked. The phone has no menu bar: use the small gear button on the chat to open the settings,
-change server or sign out. Use an `https://` server address (Android blocks plain `http://` in
-release apps).
+1. On your phone, download `Pigeodoon_*_android.apk` from the **[Releases](../../releases)** page
+   (use version 0.1.1 or newer) and open it.
+2. Android asks you to allow installing apps from this source (your browser or file manager). Allow it
+   for this one install.
+3. **Google Play Protect** may show a warning such as *"Blocked by Play Protect"* or *"App scan
+   recommended"*, because the app does not come from the Play Store. Tap **More details**, then
+   **Install anyway**. (If the dialog only offers *OK*, tap the small **More details** link first.)
+4. Open Pigeodoon and type your server address. **Allow notifications** when Android asks: without it,
+   no message can pop up. (If you said no by mistake: *Settings → Apps → Pigeodoon → Notifications*.)
+
+Updating later: install the newer `.apk` over the old one; your settings and sign-in stay.
+
+The phone has no menu bar: use the small gear button on the chat to open the settings, change server
+or sign out. Use an `https://` server address (Android blocks plain `http://` in release apps).
 
 Version 0.1 on Android only receives messages while the app is open or recently used. A background
 service for real-time notifications is planned.
+
+**If the screen stays black or the app closes at once**, please open an
+[issue](../../issues) and tell us the phone model, the Android version and the version of Pigeodoon.
 
 ## Use
 
