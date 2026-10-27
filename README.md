@@ -26,7 +26,7 @@ browser tab and the rest of Odoo in the way.
 |---|---|
 | macOS (Apple Silicon, Intel) | working, tested on Apple Silicon (version 0.1) |
 | Windows (.msi, .exe) | built automatically by GitHub Actions, **not tested yet** |
-| Linux (AppImage, .deb, .rpm) | built automatically by GitHub Actions, **not tested yet** |
+| Linux (AppImage, .deb, .rpm) | working, tested on Linux (version 0.1.1) |
 | Android (.apk) | tested in an emulator (starts, checks the server, shows the login page); **not tested on a real phone yet**; no background notifications yet |
 | iPhone / iPad | not available as a download; build from source (see "Mobile" below) |
 
