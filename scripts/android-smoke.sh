@@ -25,8 +25,8 @@ sleep 2
 adb shell input text "odoo.globalinnovationgathering.org"
 sleep 1
 adb exec-out screencap -p > "$OUT/screen_typed.png"
-adb shell input tap 540 1566
-sleep 20
+adb shell input keyevent KEYCODE_ENTER   # submit the form (the on-screen keyboard covers the button)
+sleep 25
 adb exec-out screencap -p > "$OUT/screen_after_continue.png"
 adb shell input keyevent KEYCODE_BACK   # closes the keyboard if it is still open
 sleep 2
