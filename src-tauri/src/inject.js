@@ -42,6 +42,15 @@
     };
   }
 
+  // Odoo also tries to register for web push (service worker + PushManager) as soon as notifications are "granted".
+  // Windows' WebView2 has no push service, so that fails with "Failed to enable push notifications". Pigeodoon needs no
+  // web push (the app shows notifications itself while it is running), so tell Odoo there is no service worker.
+  try {
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.getRegistration = function () { return Promise.resolve(undefined); };
+    }
+  } catch (e) { /* ignore */ }
+
   // 2. Discuss only: hide the app switcher, the menus and the other systray items. The user menu stays
   //    (preferences, notification settings, log out).
   var css =
